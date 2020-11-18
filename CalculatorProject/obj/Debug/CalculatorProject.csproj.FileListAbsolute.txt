@@ -1,0 +1,10 @@
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\bin\Debug\CalculatorProject.exe.config
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\bin\Debug\CalculatorProject.exe
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\bin\Debug\CalculatorProject.pdb
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\obj\Debug\CalculatorProject.csprojAssemblyReference.cache
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\obj\Debug\CalculatorProject.Form1.resources
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\obj\Debug\CalculatorProject.Properties.Resources.resources
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\obj\Debug\CalculatorProject.csproj.GenerateResource.cache
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\obj\Debug\CalculatorProject.csproj.CoreCompileInputs.cache
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\obj\Debug\CalculatorProject.exe
+C:\Users\Connor\Documents\GitHub_SchoolWork\CalculatorProject\CalculatorProject\CalculatorProject\obj\Debug\CalculatorProject.pdb

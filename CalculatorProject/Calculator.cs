@@ -15,7 +15,7 @@ namespace CalculatorProject
         private String result;  //the result of an equation as a string, can also be an error message
         private Queue<String> previousResults;  //queue containing the 10 most recent results along with the current result 
 
-        Calculator(String _left, String _right, String _op)
+        public Calculator(String _left, String _right, String _op)
         {
             previousResults = new Queue<String>(11);    //initialize the queue with a capcity of 11
 
@@ -47,6 +47,7 @@ namespace CalculatorProject
 
         public bool setLeft(String value)
         {
+            result = "";
             //try to parse value into a Double and store the result in left
             bool success = Double.TryParse(value, out left);
             
@@ -55,6 +56,8 @@ namespace CalculatorProject
             {
                 return true;    //return true;
             }
+
+            result = "Left Operand Error";
 
             return false;   //else, return false
         }
@@ -70,6 +73,8 @@ namespace CalculatorProject
                 return true;    //return true;
             }
 
+            result = "Right Operand Error";
+
             return false;   //else, return false
         }
 
@@ -82,67 +87,76 @@ namespace CalculatorProject
                 return true;    //return true
             }
 
+            result = "Operator Error";
+
             return false;   //return false
         }
 
         public void calculate()
         {
-            //if the opperation is addition
-            if (op == "+")
+            //if there are no already exsisting errors
+            if(result != "Left Operand Error" && result != "Right Operand Error" && result != "Operator Error")
             {
-                //try-catch in case of overflow
-                try
+                //if the opperation is addition
+                if (op == "+")
                 {
-                    result = (left + right).ToString();   //set result as the value of left + right as a string
+                    //try-catch in case of overflow
+                    try
+                    {
+                        result = (left + right).ToString();   //set result as the value of left + right as a string
+                    }
+                    catch (OverflowException)
+                    {
+                        result = "Overflow";  //set result as an overflow error
+                    }
                 }
-                catch (OverflowException)
+                //if the opperation is subtraction
+                else if (op == "-")
                 {
-                    result = "Overflow";  //set result as an overflow error
+                    //try-catch in case of overflow
+                    try
+                    {
+                        result = (left - right).ToString();   //set result as the value of left - right as a string
+                    }
+                    catch (OverflowException)
+                    {
+                        result = "Overflow";  //set result as an overflow error
+                    }
+                }
+                //if the operation is multiplication
+                else if (op == "*")
+                {
+                    //try-catch in case of overflow
+                    try
+                    {
+                        result = (left * right).ToString();   //set result as the value of left * right as a string
+                    }
+                    catch (OverflowException)
+                    {
+                        result = "Overflow";  //set result as an overflow error
+                    }
+                }
+                //if the operation is division
+                else if (op == "/")
+                {
+                    //try-catch in case of division by zero
+                    try
+                    {
+                        result = (left / right).ToString();   //set result as the value of left / right as a string
+                    }
+                    catch (DivideByZeroException)
+                    {
+                        result = "Division by Zero Error";    //set result as a division by zero error
+                    }
+                }
+                //if the operation is none of the above
+                else
+                {
+                    result = null;    //set result as null
                 }
             }
-            //if the opperation is subtraction
-            else if (op == "-")
-            {
-                //try-catch in case of overflow
-                try
-                {
-                    result = (left - right).ToString();   //set result as the value of left - right as a string
-                }
-                catch (OverflowException)
-                {
-                    result = "Overflow";  //set result as an overflow error
-                }
-            }
-            //if the operation is multiplication
-            else if (op == "*")
-            {
-                //try-catch in case of overflow
-                try
-                {
-                    result = (left * right).ToString();   //set result as the value of left * right as a string
-                }
-                catch (OverflowException)
-                {
-                    result = "Overflow";  //set result as an overflow error
-                }
-            }
-            //if the operation is division
-            else if (op == "/")
-            {
-                //try-catch in case of division by zero
-                try{
-                    result = (left / right).ToString();   //set result as the value of left / right as a string
-                }
-                catch (DivideByZeroException)
-                {
-                    result = "Division by Zero Error";    //set result as a division by zero error
-                }
-            }
-            //if the operation is none of the above
-            else
-            {
-                result = null;    //set result as null
-            }
+
+            
         }
 
         public String getResult()
