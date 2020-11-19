@@ -103,6 +103,11 @@ namespace CalculatorProject
                     //try-catch in case of overflow
                     try
                     {
+                        //if the result is positive or negative infinity
+                        if (Double.IsInfinity(left + right))
+                        {
+                            throw new OverflowException();  //throw an overflow exception
+                        }
                         result = (left + right).ToString();   //set result as the value of left + right as a string
                     }
                     catch (OverflowException)
@@ -116,6 +121,11 @@ namespace CalculatorProject
                     //try-catch in case of overflow
                     try
                     {
+                        //if the result is positive or negative infinity
+                        if (Double.IsInfinity(left - right))
+                        {
+                            throw new OverflowException();  //throw an overflow exception
+                        }
                         result = (left - right).ToString();   //set result as the value of left - right as a string
                     }
                     catch (OverflowException)
@@ -129,6 +139,11 @@ namespace CalculatorProject
                     //try-catch in case of overflow
                     try
                     {
+                        //if the result of the multiplication is positive or negative infinity
+                        if(Double.IsInfinity(left * right))
+                        {
+                            throw new OverflowException();  //throw an overflow exception
+                        }
                         result = (left * right).ToString();   //set result as the value of left * right as a string
                     }
                     catch (OverflowException)
@@ -139,14 +154,28 @@ namespace CalculatorProject
                 //if the operation is division
                 else if (op == "/")
                 {
-                    //try-catch in case of division by zero
+                    //try-catch in case of division by zero or overflow
                     try
                     {
+                        //if the dividend is zero
+                        if(right == 0)
+                        {
+                            throw new DivideByZeroException();  //throw a divide by zero exception
+                        }
+                        //if the result of the division is either positive or negative infinity
+                        else if (Double.IsInfinity(left / right))
+                        {
+                            throw new OverflowException();  //throw an overflow exception
+                        }
                         result = (left / right).ToString();   //set result as the value of left / right as a string
                     }
                     catch (DivideByZeroException)
                     {
                         result = "Division by Zero Error";    //set result as a division by zero error
+                    }
+                    catch (OverflowException)
+                    {
+                        result = "Overflow";    //set result as overflow
                     }
                 }
                 //if the operation is none of the above
@@ -156,17 +185,23 @@ namespace CalculatorProject
                 }
             }
 
-            
-        }
-
-        public String getResult()
-        {
             //if the queue is at max capacity
-            if(previousResults.Count == 11)
+            if (previousResults.Count == 11)
             {
                 previousResults.Dequeue();  //dequeue the result from the front of the queue
             }
             previousResults.Enqueue(result);    //enqueue the new result at the back of the queue
+
+        }
+
+        public String getResult()
+        {
+            /*/if the queue is at max capacity
+            if(previousResults.Count == 11)
+            {
+                previousResults.Dequeue();  //dequeue the result from the front of the queue
+            }
+            previousResults.Enqueue(result);    //enqueue the new result at the back of the queue*/
 
             return result;  //return the result
         }
@@ -174,7 +209,7 @@ namespace CalculatorProject
         public String getPreviousResult(int index)
         {
             //if the index is outside of the bounds provided in the project documentation: 1 - 10
-            if(index <= 0 || index > 10)
+            if(index < 1 || index > 10)
             {
                 return "Index Error";   //return an error
             }
@@ -188,7 +223,12 @@ namespace CalculatorProject
                 return _previousResults[index]; //return the result at the index
             }
 
-            return "Index Error";   //return an error
+            return "";   //return an empty string
+        }
+
+        public int getMaximumIndex()
+        {
+            return previousResults.Count;
         }
     }
 }

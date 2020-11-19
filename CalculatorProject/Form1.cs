@@ -13,6 +13,7 @@ namespace CalculatorProject
     public partial class Form1 : Form
     {
         Calculator simpleCalculator;
+        int index;
 
         public Form1()
         {
@@ -21,7 +22,14 @@ namespace CalculatorProject
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+
             simpleCalculator = null;
+            index = 0;
+            calculatorDisplayBox.KeyPress += calculatorDisplayBox_KeyPress;
+
+            buttonUndo.Enabled = false;
+            buttonRedo.Enabled = false;
         }
 
         private void buttonDot_Click(object sender, EventArgs e)
@@ -37,6 +45,9 @@ namespace CalculatorProject
         private void buttonEqual_Click(object sender, EventArgs e)
         {
             calculatorDisplayBox.Text = getCalculationResult();
+            buttonUndo.Enabled = true;
+            buttonRedo.Enabled = false;
+            index = 0;
         }
 
         private void buttonOne_Click(object sender, EventArgs e)
@@ -104,6 +115,74 @@ namespace CalculatorProject
             calculatorDisplayBox.Text += " / ";
         }
 
+        private void buttonNegative_Click(object sender, EventArgs e)
+        {
+            calculatorDisplayBox.Text += "-";
+        }
+
+        private void buttonClear_Click(object sender, EventArgs e)
+        {
+            calculatorDisplayBox.Text = "";
+        }
+
+        private void buttonE_Click(object sender, EventArgs e)
+        {
+            calculatorDisplayBox.Text += "E";
+        }
+
+        private void buttonUndo_Click(object sender, EventArgs e)
+        {
+            index++;
+            if(index == 10 || index == simpleCalculator.getMaximumIndex())
+            {
+                buttonUndo.Enabled = false;
+            }
+
+            calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
+            buttonRedo.Enabled = true;
+        }
+
+        private void buttonRedo_Click(object sender, EventArgs e)
+        {
+            index--;
+            if (index == 0)
+            {
+                buttonRedo.Enabled = false;
+                calculatorDisplayBox.Text = simpleCalculator.getResult();
+            }
+            else
+            {
+                calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
+            }
+            
+            buttonUndo.Enabled = true;
+        }
+
+        private void checkRefactoredCalculator_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkRefactoredCalculator.Checked == true)
+            {
+                simpleCalculator = null;
+                buttonUndo.Enabled = false;
+                buttonRedo.Enabled = false;
+            }
+            else
+            {
+
+            }
+        }
+
+        private void calculatorDisplayBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == (char)Keys.Enter)
+            {
+                calculatorDisplayBox.Text = getCalculationResult();
+                buttonUndo.Enabled = true;
+                buttonRedo.Enabled = false;
+                index = 0;
+            }
+        }
+
         private List<String> parseInput()
         {
             List<String> result = new List<string>();
@@ -136,6 +215,9 @@ namespace CalculatorProject
                 result.Add(number); //add the final number to the result list
             }
 
+            result = checkScientificNotation(result);   //check the result for any scientific notation that needs formatting
+            result = checkNegativeNumbers(result);  //check the result for any negative numbers that need to be created
+
             return result;
         }
 
@@ -146,58 +228,223 @@ namespace CalculatorProject
             //if the input is not empty
             if (input.Count != 0)
             {
-                //if the input contains all 3 parts: (number operator number)
-                if (input.Count == 3)
+                //if the user has specified they are using the simple calculator
+                if(checkRefactoredCalculator.Checked == false)
                 {
-                    if (simpleCalculator == null)
+                    //if the input contains all 3 parts: (number operator number)
+                    if (input.Count == 3)
                     {
-                        simpleCalculator = new Calculator(input[0], input[2], input[1]);
-                        simpleCalculator.calculate();
-                        return simpleCalculator.getResult();
+                        if (simpleCalculator == null)
+                        {
+                            simpleCalculator = new Calculator(input[0], input[2], input[1]);
+                            simpleCalculator.calculate();
+                            return simpleCalculator.getResult();
+                        }
+                        else
+                        {
+                            simpleCalculator.setLeft(input[0]);
+                            simpleCalculator.setOperator(input[1]);
+                            simpleCalculator.setRight(input[2]);
+                            simpleCalculator.calculate();
+                            return simpleCalculator.getResult();
+                        }
                     }
+                    //if the input only contains 2 parts: (number operator) or (operator number)
+                    else if (input.Count == 2)
+                    {
+                        if (simpleCalculator == null)
+                        {
+                            simpleCalculator = new Calculator(input[0], "", input[1]);
+                            simpleCalculator.calculate();
+                            return simpleCalculator.getResult();
+                        }
+                        else
+                        {
+                            simpleCalculator.setLeft(input[0]);
+                            simpleCalculator.setOperator(input[1]);
+                            simpleCalculator.setRight("");
+                            simpleCalculator.calculate();
+                            return simpleCalculator.getResult();
+                        }
+                    }
+                    //if the input only contains one part
+                    else if (input.Count == 1)
+                    {
+                        //do nothing, if an operator is the only part then an error gets thrown for the left operand
+                        //therefore the only part in the input textbox is a number, so just keep the number in the textbox: i.e. 137 = 137
+                        return calculatorDisplayBox.Text;
+                    }
+                    //if the input is longer than the basic formula
                     else
                     {
-                        simpleCalculator.setLeft(input[0]);
-                        simpleCalculator.setOperator(input[1]);
-                        simpleCalculator.setRight(input[2]);
-                        simpleCalculator.calculate();
-                        return simpleCalculator.getResult();
+                        //advanced calculator
+                        return "";
                     }
                 }
-                //if the input only contains 2 parts: (number operator) or (operator number)
-                else if (input.Count == 2)
-                {
-                    if (simpleCalculator == null)
-                    {
-                        simpleCalculator = new Calculator(input[0], "", input[1]);
-                        simpleCalculator.calculate();
-                        return simpleCalculator.getResult();
-                    }
-                    else
-                    {
-                        simpleCalculator.setLeft(input[0]);
-                        simpleCalculator.setOperator(input[1]);
-                        simpleCalculator.setRight("");
-                        simpleCalculator.calculate();
-                        return simpleCalculator.getResult();
-                    }
-                }
-                //if the input only contains one part
-                else if (input.Count == 1)
-                {
-                    //do nothing, if an operator is the only part then an error gets thrown for the left operand
-                    //therefore the only part in the input textbox is a number, so just keep the number in the textbox: i.e. 137 = 137
-                    return calculatorDisplayBox.Text;
-                }
-                //if the input is longer than the basic formula
+                //if the user has specified they are using the refactored calculator
                 else
                 {
-                    //advanced calculator
-                    return "";
+
                 }
             }
 
             return "";
         }
+
+        private List<String> checkScientificNotation(List<String> input)
+        {
+            List<String> output = new List<String>();   //list of strings to hold the formatted output
+
+            //iterate over all the strings in the input list
+            for(int i=0; i<input.Count; i++)
+            {
+                //iterate over all the characters in each string
+                for(int j=0; j<input[i].Length; j++)
+                {
+                    //if a certain character is not a number or an operator or a decimal, and it is not the final character in the string
+                    if (!char.IsDigit(input[i][j]) && input[i][j] != '+' && input[i][j] != '-' && input[i][j] != '*' && input[i][j] != '/' && input[i][j] != '.' && j != input[i].Length-1)
+                    {
+                        output.Add(input[i]);   //add the string to the output list
+                        break;  //break out of the for loop
+                    }
+                    //if a certain character is not a number or an operator or a decimal, and this is the final character in the string
+                    else if (!char.IsDigit(input[i][j]) && input[i][j] != '+' && input[i][j] != '-' && input[i][j] != '*' && input[i][j] != '/' && input[i][j] != '.' && j == input[i].Length - 1)
+                    {
+                        //if this character is E, then this might be scientific notation
+                        if(input[i][j] == 'E')
+                        {
+                            int intResult = 0;  //int to keep the result of the following try parse
+
+                            //if the string next to this one is either a + or a -, and the string after that is an integer
+                            //      then these three strings are in scientific notation
+                            if((input[i+1] == "+" || input[i + 1] == "-") && Int32.TryParse(input[i+2], out intResult))
+                            {
+                                String formatted = formatScientificNotation(input[i].TrimEnd('E'), input[i + 1], intResult);    //format those three strings into one
+                                output.Add(formatted);  //add the formatted string to the output list
+                                i = i + 2;  //increment the outer for loop counter by 2, because we have consumed those following 2 strings for the scientific notation formatting
+                                break;  //break out of the for loop
+                            }
+                            //those three strings are not in scientific notation
+                            else
+                            {
+                                output.Add(input[i]);
+                                break;  //break out of the for loop
+                            }
+                        }
+                        //if the final character is anything other than E
+                        else
+                        {
+                            output.Add(input[i]);   //add the string to the output list
+                            break;  //break out of the for loop
+                        }
+                    }
+                    //if this is the final character in the string
+                    else if(j == input[i].Length - 1)
+                    {
+                        output.Add(input[i]);   //add the string to the output list
+                        break;  //break out of the for loop
+                    }
+                }
+            }
+
+            return output;
+        }
+
+        private String formatScientificNotation(String number, String sign, int numberOfZeros)
+        {
+            String formatResult = "";
+
+            if(sign == "+")
+            {
+                bool decimalFlag = false;
+                foreach(char c in number)
+                {
+                    if(c == '.')
+                    {
+                        decimalFlag = true;
+                    }
+                    else
+                    {
+                        formatResult += c;
+                        if (decimalFlag == true)
+                        {
+                            numberOfZeros--;
+                        }
+                    }
+                }
+
+                for(int i=0; i<numberOfZeros; i++)
+                {
+                    formatResult += '0';
+                }
+            }
+            else if(sign == "-")
+            {
+                bool decimalFlag = false;
+                foreach (char c in number)
+                {
+                    if (c == '.')
+                    {
+                        decimalFlag = true;
+                    }
+                    else
+                    {
+                        formatResult += c;
+                        if (decimalFlag == false)
+                        {
+                            numberOfZeros--;
+                        }
+                    }
+                }
+
+                String zeroHolder = "0.";
+                for (int i = 0; i < numberOfZeros; i++)
+                {
+                    zeroHolder += '0';
+                }
+
+                formatResult = zeroHolder + formatResult;
+            }
+
+            return formatResult;
+        }
+
+        private List<String> checkNegativeNumbers(List<String> input)
+        {
+            List<String> output = new List<String>();
+
+            for(int i=0; i<input.Count; i++)
+            {
+                if (input[i] == "-")
+                {
+                    //if the very first thing in the input list is a -, and input has more than just one string
+                    if(i == 0 && i != input.Count-1)
+                    {
+                        output.Add("-" + input[i + 1]); //add a - to the begining of the next string
+                        i++;    //incrememnt i since we just consumed the next string
+                    }
+                    //if the string directly before this one is an operator, and there exists something after this string
+                    else if((input[i-1] == "+" || input[i - 1] == "-" || input[i - 1] == "*" || input[i - 1] == "/") && i != input.Count - 1)
+                    {
+                        output.Add("-" + input[i + 1]); //add a - to the begining of the next string
+                        i++;    //incrememnt i since we just consumed the next string
+                    }
+                    //otherwise just add the string to the output list
+                    else
+                    {
+                        output.Add(input[i]);
+                    }
+                }
+                //if the string is anything else
+                else
+                {
+                    output.Add(input[i]);
+                }
+            }
+
+            return output;
+        }
+
+        
     }
 }
