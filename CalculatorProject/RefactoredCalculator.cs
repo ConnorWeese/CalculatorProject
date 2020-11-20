@@ -12,12 +12,14 @@ namespace CalculatorProject
         private String result;  //the result of an equation as a string, can also be an error message
         private Queue<String> previousResults;  //queue containing the 10 most recent results along with the current result 
 
+        //constructor
         public RefactoredCalculator()
         {
             result = "";
             previousResults = new Queue<String>(11);
         }
 
+        //public method to perform a calculation and return the results
         public String calculate(List<String> input)
         {
             //if the input contains only one string
@@ -32,7 +34,7 @@ namespace CalculatorProject
                     //if the string is an operator
                     if(input[i] == "+" || input[i] == "-" || input[i] == "*" || input[i] == "/")
                     {
-                        result = "Syntax Error: Must begin and end with a number";
+                        result = "Input Error: Must begin and end with a number";
                         enqueueResult(result);
 
                         return result; //return a syntax error
@@ -306,6 +308,7 @@ namespace CalculatorProject
             return result;
         }
 
+        //private method to add the result of a calculation to the previous results queue
         private void enqueueResult(String str)
         {
             //if the queue is at max capacity
@@ -316,11 +319,13 @@ namespace CalculatorProject
             previousResults.Enqueue(result);    //enqueue the new result at the back of the queue
         }
 
+        //public method to return the most recent result
         public String getResult()
         {
             return result;  //return the result
         }
 
+        //public method to return a previous result at a given index
         public String getPreviousResult(int index)
         {
             //if the index is outside of the bounds provided in the project documentation: 1 - 10
@@ -341,6 +346,7 @@ namespace CalculatorProject
             return "";   //return an empty string
         }
 
+        //public method to get the maximum index that can be used for the getPreviousResults method
         public int getMaximumIndex()
         {
             return previousResults.Count;

@@ -12,9 +12,9 @@ namespace CalculatorProject
 {
     public partial class Form1 : Form
     {
-        Calculator simpleCalculator;
-        RefactoredCalculator refactoredCalculator;
-        int index;
+        Calculator simpleCalculator;    //simple calculator
+        RefactoredCalculator refactoredCalculator;  //refactored calculator
+        int index;  //index used to get previous results from both calculators
 
         public Form1()
         {
@@ -23,16 +23,18 @@ namespace CalculatorProject
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            FormBorderStyle = FormBorderStyle.FixedDialog;
+            FormBorderStyle = FormBorderStyle.FixedDialog;  //set the form's boarder style to FixedDialog
 
-            simpleCalculator = null;
-            refactoredCalculator = new RefactoredCalculator();
-            index = 0;
-            calculatorDisplayBox.KeyPress += calculatorDisplayBox_KeyPress;
+            simpleCalculator = null;    //set the simpleCalculator to null
+            refactoredCalculator = new RefactoredCalculator();  //initialize the refactoredCalculator
+            index = 0;  //set the history index to 0
+            calculatorDisplayBox.KeyPress += calculatorDisplayBox_KeyPress; //add the new keypress event to the textbox
 
-            buttonUndo.Enabled = false;
-            buttonRedo.Enabled = false;
+            buttonUndo.Enabled = false; //set the undo button to be disabled
+            buttonRedo.Enabled = false; //set the redo button to be disabled
         }
+
+        //GUI event handlers
 
         private void buttonDot_Click(object sender, EventArgs e)
         {
@@ -134,125 +136,146 @@ namespace CalculatorProject
 
         private void buttonUndo_Click(object sender, EventArgs e)
         {
+            //if this is the refactored calculator
             if(checkRefactoredCalculator.Checked == true)
             {
-                index++;
-                if (index == 10 || index == refactoredCalculator.getMaximumIndex())
+                index++;    //increment the index by 1
+                if (index == 10 || index == refactoredCalculator.getMaximumIndex()) //if the index is at the end of the previous results
                 {
-                    buttonUndo.Enabled = false;
+                    buttonUndo.Enabled = false; //disbale the undo button
                 }
 
-                calculatorDisplayBox.Text = refactoredCalculator.getPreviousResult(index);
-                buttonRedo.Enabled = true;
+                calculatorDisplayBox.Text = refactoredCalculator.getPreviousResult(index);  //set the calculatorDisplayBox to be the previous result
+                buttonRedo.Enabled = true;  //enable the redo button
             }
+            //if this is the simple calculator
             else
             {
-                index++;
-                if (index == 10 || index == simpleCalculator.getMaximumIndex())
+                index++;    //increment the index by 1
+                if (index == 10 || index == simpleCalculator.getMaximumIndex()) //if the index is at the end of the previous results
                 {
-                    buttonUndo.Enabled = false;
+                    buttonUndo.Enabled = false; //disbale the undo button
                 }
 
-                calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
-                buttonRedo.Enabled = true;
+                calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);  //set the calculatorDisplayBox to be the previous result
+                buttonRedo.Enabled = true;  //enable the redo button
             }
         }
 
         private void buttonRedo_Click(object sender, EventArgs e)
         {
+            //if this is the refactored calculator
             if (checkRefactoredCalculator.Checked == true)
             {
-                index--;
-                if (index == 0)
+                index--;    //decrement the index
+                if (index == 0) //if the index is now at 0
                 {
-                    buttonRedo.Enabled = false;
-                    calculatorDisplayBox.Text = refactoredCalculator.getResult();
+                    buttonRedo.Enabled = false; //diable the redo button
+                    calculatorDisplayBox.Text = refactoredCalculator.getResult();   //get the current result
                 }
                 else
                 {
-                    calculatorDisplayBox.Text = refactoredCalculator.getPreviousResult(index);
+                    calculatorDisplayBox.Text = refactoredCalculator.getPreviousResult(index);  //get the previous result
                 }
 
-                buttonUndo.Enabled = true;
+                buttonUndo.Enabled = true;  //enable the undo button
             }
+            //if this is the simple calculator
             else
             {
-                index--;
-                if (index == 0)
+                index--;    //decrement the index
+                if (index == 0) //if the index is now at 0
                 {
-                    buttonRedo.Enabled = false;
-                    calculatorDisplayBox.Text = simpleCalculator.getResult();
+                    buttonRedo.Enabled = false; //diable the redo button
+                    calculatorDisplayBox.Text = simpleCalculator.getResult();   //get the current result
                 }
                 else
                 {
-                    calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
+                    calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);  //get the previous result
                 }
 
-                buttonUndo.Enabled = true;
+                buttonUndo.Enabled = true;  //enable the undo button
             }
         }
 
         private void checkRefactoredCalculator_CheckedChanged(object sender, EventArgs e)
         {
+            //if the user has selected to use the refactored calculator
             if(checkRefactoredCalculator.Checked == true)
             {
-                calculatorDisplayBox.Text = refactoredCalculator.getResult();
+                calculatorDisplayBox.Text = refactoredCalculator.getResult();   //set the calculatorDisplayBox to be the current result
+                //if the calculator has no history
                 if (refactoredCalculator.getMaximumIndex() == 0)
                 {
-                    buttonUndo.Enabled = false;
-                    buttonRedo.Enabled = false;
-                    index = 0;
+                    buttonUndo.Enabled = false; //disable the undo button
+                    buttonRedo.Enabled = false; //disable the redo button
+                    index = 0;  //set the history index to 0
                 }
                 else
                 {
-                    buttonUndo.Enabled = true;
-                    buttonRedo.Enabled = false;
-                    index = 0;
+                    buttonUndo.Enabled = true;  //enable the undo button
+                    buttonRedo.Enabled = false; //diable the redo button
+                    index = 0;  //set the history index to 0
                 }
             }
+            //if the user has de-selected the refactored calculator
             else
             {
+                //if the simple calculator has not yet been used
                 if(simpleCalculator == null)
                 {
-                    calculatorDisplayBox.Text = "";
-                    buttonUndo.Enabled = false;
-                    buttonRedo.Enabled = false;
-                    index = 0;
+                    calculatorDisplayBox.Text = ""; //set the calculatorDisplayBox to an empty string
+                    buttonUndo.Enabled = false; //disable the undo button
+                    buttonRedo.Enabled = false; //disable the redo button
+                    index = 0; //set the history index to 0
                 }
                 else
                 {
-                    calculatorDisplayBox.Text = simpleCalculator.getResult();
-                    buttonUndo.Enabled = true;
-                    buttonRedo.Enabled = false;
-                    index = 0;
+                    calculatorDisplayBox.Text = simpleCalculator.getResult();   //set the calculatorDisplayBox to be the current result
+                    buttonUndo.Enabled = true;  //enable the undo button
+                    buttonRedo.Enabled = false; //diable the redo button
+                    index = 0;  //set the history index to 0
                 }
             }
         }
 
         private void buttonBack_Click(object sender, EventArgs e)
         {
+            //if there is text to remove
             if(calculatorDisplayBox.Text != "")
             {
-                calculatorDisplayBox.Text = calculatorDisplayBox.Text.Remove(calculatorDisplayBox.Text.Length - 1, 1);
+                calculatorDisplayBox.Text = calculatorDisplayBox.Text.Remove(calculatorDisplayBox.TextLength - 1, 1);   //remove one character from the string
             }
+
+            //focus on the calculatorDisplayBox and set the cursor to the end
+            calculatorDisplayBox.Focus();
+            calculatorDisplayBox.SelectionStart = calculatorDisplayBox.TextLength;
+            calculatorDisplayBox.SelectionLength = 0;
         }
 
         private void calculatorDisplayBox_KeyPress(object sender, KeyPressEventArgs e)
         {
+            //if the user presses enter when the textbox is focused
             if(e.KeyChar == (char)Keys.Enter)
             {
-                calculatorDisplayBox.Text = getCalculationResult();
-                buttonUndo.Enabled = true;
-                buttonRedo.Enabled = false;
-                index = 0;
+                calculatorDisplayBox.Text = getCalculationResult(); //get the calculation results
+                buttonUndo.Enabled = true;  //set the undo button to be enabled
+                buttonRedo.Enabled = false; //set the redo button to be disabled
+                index = 0;  //set the history index to 0
+
+                //focus on the calculatorDisplayBox and set the cursor to the end
+                calculatorDisplayBox.Focus();
+                calculatorDisplayBox.SelectionStart = calculatorDisplayBox.TextLength;
+                calculatorDisplayBox.SelectionLength = 0;
             }
         }
 
+        //private method to parse the input for the calculator
         private List<String> parseInput()
         {
-            List<String> result = new List<string>();
-            char[] characters = calculatorDisplayBox.Text.ToCharArray();
-            String number = "";
+            List<String> result = new List<string>();   //list of strings to hold the result of the parse
+            char[] characters = calculatorDisplayBox.Text.ToCharArray();    //character array that holds the contents of the calculatorDisplayBox
+            String number = ""; //a string to hold a number that is being parsed
 
             //for each char in the char array
             for(int i = 0; i < characters.Length; i++)
@@ -299,6 +322,7 @@ namespace CalculatorProject
             return result;
         }
 
+        //private method to get the calculation results from the calculator
         private String getCalculationResult()
         {
             List<String> input = parseInput();
@@ -312,55 +336,58 @@ namespace CalculatorProject
                     //if the input contains all 3 parts: (number operator number)
                     if (input.Count == 3)
                     {
+                        //if the simpleCalculator has not been initiated yet
                         if (simpleCalculator == null)
                         {
-                            simpleCalculator = new Calculator(input[0], input[2], input[1]);
-                            simpleCalculator.calculate();
-                            return simpleCalculator.getResult();
+                            simpleCalculator = new Calculator(input[0], input[2], input[1]);    //call the constructor
+                            simpleCalculator.calculate();   //calculate the result
+                            return simpleCalculator.getResult();    //return the result
                         }
                         else
                         {
-                            simpleCalculator.setLeft(input[0]);
-                            simpleCalculator.setOperator(input[1]);
-                            simpleCalculator.setRight(input[2]);
-                            simpleCalculator.calculate();
-                            return simpleCalculator.getResult();
+                            simpleCalculator.setLeft(input[0]); //set the left operand
+                            simpleCalculator.setOperator(input[1]); //set the operator
+                            simpleCalculator.setRight(input[2]);    //set the right operand
+                            simpleCalculator.calculate();   //calculate the result
+                            return simpleCalculator.getResult();    //return the result
                         }
                     }
                     //if the input only contains 2 parts: (number operator) or (operator number)
                     else if (input.Count == 2)
                     {
+                        //if the simpleCalculator has not been initiated yet
                         if (simpleCalculator == null)
                         {
-                            simpleCalculator = new Calculator(input[0], "", input[1]);
-                            simpleCalculator.calculate();
-                            return simpleCalculator.getResult();
+                            simpleCalculator = new Calculator(input[0], "", input[1]);  //call the constructor
+                            simpleCalculator.calculate();   //calculate the result
+                            return simpleCalculator.getResult();    //return the result
                         }
                         else
                         {
-                            simpleCalculator.setLeft(input[0]);
-                            simpleCalculator.setOperator(input[1]);
-                            simpleCalculator.setRight("");
-                            simpleCalculator.calculate();
-                            return simpleCalculator.getResult();
+                            simpleCalculator.setLeft(input[0]); //set the left operand
+                            simpleCalculator.setOperator(input[1]); //set the operator
+                            simpleCalculator.setRight("");  //set the right operand to be an empty string
+                            simpleCalculator.calculate();   //calculate the result
+                            return simpleCalculator.getResult();    //return the result
                         }
                     }
                     //if the input only contains one part
                     else if (input.Count == 1)
                     {
+                        //if the simpleCalculator has not been initiated yet
                         if (simpleCalculator == null)
                         {
-                            simpleCalculator = new Calculator(input[0], "", "");
-                            simpleCalculator.calculate();
-                            return simpleCalculator.getResult();
+                            simpleCalculator = new Calculator(input[0], "", "");    //call the constructor
+                            simpleCalculator.calculate();   //calculate the result
+                            return simpleCalculator.getResult();    //return the result
                         }
                         else
                         {
-                            simpleCalculator.setLeft(input[0]);
-                            simpleCalculator.setOperator("");
-                            simpleCalculator.setRight("");
-                            simpleCalculator.calculate();
-                            return simpleCalculator.getResult();
+                            simpleCalculator.setLeft(input[0]); //set the left operand
+                            simpleCalculator.setOperator("");   //set the operator to be an empty string
+                            simpleCalculator.setRight("");  //set the right operand to be an empty string
+                            simpleCalculator.calculate();   //calculate the reuslt
+                            return simpleCalculator.getResult();    //return the result
                         }
                     }
                     //if the input is longer than the basic formula
@@ -386,13 +413,14 @@ namespace CalculatorProject
                 //if the user has specified they are using the refactored calculator
                 else
                 {
-                    return refactoredCalculator.calculate(input);
+                    return refactoredCalculator.calculate(input);   //return the result of the calculation
                 }
             }
 
             return "";
         }
 
+        //private method to check if some strings are in scientific notation format
         private List<String> checkScientificNotation(List<String> input)
         {
             List<String> output = new List<String>();   //list of strings to hold the formatted output
@@ -409,8 +437,8 @@ namespace CalculatorProject
                         output.Add(input[i]);   //add the string to the output list
                         break;  //break out of the for loop
                     }
-                    //if a certain character is not a number or an operator or a decimal, and this is the final character in the string
-                    else if (!char.IsDigit(input[i][j]) && input[i][j] != '+' && input[i][j] != '-' && input[i][j] != '*' && input[i][j] != '/' && input[i][j] != '.' && j == input[i].Length - 1)
+                    //if a certain character is not a number or an operator or a decimal, this is the final character in the string, and this is not the only character in the string
+                    else if (!char.IsDigit(input[i][j]) && input[i][j] != '+' && input[i][j] != '-' && input[i][j] != '*' && input[i][j] != '/' && input[i][j] != '.' && j == input[i].Length - 1 && j != 0)
                     {
                         //if this character is E, then this might be scientific notation
                         if(input[i][j] == 'E')
@@ -452,65 +480,73 @@ namespace CalculatorProject
             return output;
         }
 
+        //private method to format scientific notation to standard notation for use in the calculator
         private String formatScientificNotation(String number, String sign, int numberOfZeros)
         {
-            String formatResult = "";
+            String formatResult = "";   //string to hold the result of the format
 
+            //if it is of the form <number>E+<number>
             if(sign == "+")
             {
-                bool decimalFlag = false;
+                bool decimalFlag = false;   //bool used to mark when a decimal has been found
                 foreach(char c in number)
                 {
+                    //if the character is a decimal
                     if(c == '.')
                     {
-                        decimalFlag = true;
+                        decimalFlag = true; //set the flag to true
                     }
                     else
                     {
-                        formatResult += c;
-                        if (decimalFlag == true)
+                        formatResult += c;  //add the character to the format result
+                        if (decimalFlag == true)    //if we have seen a decimal
                         {
-                            numberOfZeros--;
+                            numberOfZeros--;    //decrement the number of zeros
                         }
                     }
                 }
 
+                //iterate over the total number of zeros to add to the number
                 for(int i=0; i<numberOfZeros; i++)
                 {
-                    formatResult += '0';
+                    formatResult += '0';    //add a zero to the end of the result
                 }
             }
-            else if(sign == "-")
+            //if it is of the form <number>E-<number>
+            else if (sign == "-")
             {
-                bool decimalFlag = false;
+                bool decimalFlag = false;   //bool used to mark when a decimal has been found
                 foreach (char c in number)
                 {
+                    //if the character is a decimal
                     if (c == '.')
                     {
-                        decimalFlag = true;
+                        decimalFlag = true; //set the flag to true
                     }
                     else
                     {
-                        formatResult += c;
-                        if (decimalFlag == false)
+                        formatResult += c;  //add the character to the format result
+                        if (decimalFlag == false)   //if we have not yet seen a decimal
                         {
-                            numberOfZeros--;
+                            numberOfZeros--;    //decrement the number of zeros
                         }
                     }
                 }
 
-                String zeroHolder = "0.";
+                String zeroHolder = "0.";   //string to hold the zeros we are adding to the result
+                //iterate over the total number of zeros to add to the number
                 for (int i = 0; i < numberOfZeros; i++)
                 {
-                    zeroHolder += '0';
+                    zeroHolder += '0';  //add a zero to the zero holder
                 }
 
-                formatResult = zeroHolder + formatResult;
+                formatResult = zeroHolder + formatResult;   //put the format result behind the zeros we added to the zeroHolder
             }
 
-            return formatResult;
+            return formatResult;    //return the result
         }
 
+        //private method to check for negative numbers
         private List<String> checkNegativeNumbers(List<String> input)
         {
             List<String> output = new List<String>();
@@ -546,7 +582,5 @@ namespace CalculatorProject
 
             return output;
         }
-
-        
     }
 }

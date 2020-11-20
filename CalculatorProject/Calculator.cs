@@ -15,6 +15,7 @@ namespace CalculatorProject
         private String result;  //the result of an equation as a string, can also be an error message
         private Queue<String> previousResults;  //queue containing the 10 most recent results along with the current result 
 
+        //constructor
         public Calculator(String _left, String _right, String _op)
         {
             previousResults = new Queue<String>(11);    //initialize the queue with a capcity of 11
@@ -33,6 +34,7 @@ namespace CalculatorProject
             }
         }
 
+        //public method to set the left operand
         public bool setLeft(String value)
         {
             result = "";
@@ -44,12 +46,12 @@ namespace CalculatorProject
             {
                 return true;    //return true;
             }
-
-            result = String.Format("Syntax Error: \"{0}\"", value);
+            result = String.Format("Error: \"{0}\" is not a number", value);
 
             return false;   //else, return false
         }
 
+        //public method to set the right operand
         public bool setRight(String value)
         {
             //try to parse value into a Double and store the result in right
@@ -61,11 +63,15 @@ namespace CalculatorProject
                 return true;    //return true;
             }
 
-            result = String.Format("Syntax Error: \"{0}\"", value);
+            if(result == "")
+            {
+                result = String.Format("Error: \"{0}\" is not a number", value);
+            }
 
             return false;   //else, return false
         }
 
+        //public method to set the operator
         public bool setOperator(String value)
         {
             //if value is any one of +,-,*,/
@@ -75,11 +81,15 @@ namespace CalculatorProject
                 return true;    //return true
             }
 
-            result = String.Format("Syntax Error: \"{0}\"", value);
+            if (result == "")
+            {
+                result = String.Format("Input Error: \"{0}\"", value);
+            }
 
             return false;   //return false
         }
 
+        //public method to calculate the result of <left><operator><right>
         public void calculate()
         {
             //if there are no already exsisting errors
@@ -183,18 +193,13 @@ namespace CalculatorProject
 
         }
 
+        //public method to return the result of a calculation
         public String getResult()
         {
-            /*/if the queue is at max capacity
-            if(previousResults.Count == 11)
-            {
-                previousResults.Dequeue();  //dequeue the result from the front of the queue
-            }
-            previousResults.Enqueue(result);    //enqueue the new result at the back of the queue*/
-
             return result;  //return the result
         }
 
+        //public method to return a previous result at a given index
         public String getPreviousResult(int index)
         {
             //if the index is outside of the bounds provided in the project documentation: 1 - 10
@@ -215,6 +220,7 @@ namespace CalculatorProject
             return "";   //return an empty string
         }
 
+        //public method to get the maximum index that can be used for the getPreviousResults method
         public int getMaximumIndex()
         {
             return previousResults.Count;
