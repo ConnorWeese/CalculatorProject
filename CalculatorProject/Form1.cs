@@ -13,6 +13,7 @@ namespace CalculatorProject
     public partial class Form1 : Form
     {
         Calculator simpleCalculator;
+        RefactoredCalculator refactoredCalculator;
         int index;
 
         public Form1()
@@ -25,6 +26,7 @@ namespace CalculatorProject
             FormBorderStyle = FormBorderStyle.FixedDialog;
 
             simpleCalculator = null;
+            refactoredCalculator = new RefactoredCalculator();
             index = 0;
             calculatorDisplayBox.KeyPress += calculatorDisplayBox_KeyPress;
 
@@ -132,43 +134,106 @@ namespace CalculatorProject
 
         private void buttonUndo_Click(object sender, EventArgs e)
         {
-            index++;
-            if(index == 10 || index == simpleCalculator.getMaximumIndex())
+            if(checkRefactoredCalculator.Checked == true)
             {
-                buttonUndo.Enabled = false;
-            }
+                index++;
+                if (index == 10 || index == refactoredCalculator.getMaximumIndex())
+                {
+                    buttonUndo.Enabled = false;
+                }
 
-            calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
-            buttonRedo.Enabled = true;
+                calculatorDisplayBox.Text = refactoredCalculator.getPreviousResult(index);
+                buttonRedo.Enabled = true;
+            }
+            else
+            {
+                index++;
+                if (index == 10 || index == simpleCalculator.getMaximumIndex())
+                {
+                    buttonUndo.Enabled = false;
+                }
+
+                calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
+                buttonRedo.Enabled = true;
+            }
         }
 
         private void buttonRedo_Click(object sender, EventArgs e)
         {
-            index--;
-            if (index == 0)
+            if (checkRefactoredCalculator.Checked == true)
             {
-                buttonRedo.Enabled = false;
-                calculatorDisplayBox.Text = simpleCalculator.getResult();
+                index--;
+                if (index == 0)
+                {
+                    buttonRedo.Enabled = false;
+                    calculatorDisplayBox.Text = refactoredCalculator.getResult();
+                }
+                else
+                {
+                    calculatorDisplayBox.Text = refactoredCalculator.getPreviousResult(index);
+                }
+
+                buttonUndo.Enabled = true;
             }
             else
             {
-                calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
+                index--;
+                if (index == 0)
+                {
+                    buttonRedo.Enabled = false;
+                    calculatorDisplayBox.Text = simpleCalculator.getResult();
+                }
+                else
+                {
+                    calculatorDisplayBox.Text = simpleCalculator.getPreviousResult(index);
+                }
+
+                buttonUndo.Enabled = true;
             }
-            
-            buttonUndo.Enabled = true;
         }
 
         private void checkRefactoredCalculator_CheckedChanged(object sender, EventArgs e)
         {
             if(checkRefactoredCalculator.Checked == true)
             {
-                simpleCalculator = null;
-                buttonUndo.Enabled = false;
-                buttonRedo.Enabled = false;
+                calculatorDisplayBox.Text = refactoredCalculator.getResult();
+                if (refactoredCalculator.getMaximumIndex() == 0)
+                {
+                    buttonUndo.Enabled = false;
+                    buttonRedo.Enabled = false;
+                    index = 0;
+                }
+                else
+                {
+                    buttonUndo.Enabled = true;
+                    buttonRedo.Enabled = false;
+                    index = 0;
+                }
             }
             else
             {
+                if(simpleCalculator == null)
+                {
+                    calculatorDisplayBox.Text = "";
+                    buttonUndo.Enabled = false;
+                    buttonRedo.Enabled = false;
+                    index = 0;
+                }
+                else
+                {
+                    calculatorDisplayBox.Text = simpleCalculator.getResult();
+                    buttonUndo.Enabled = true;
+                    buttonRedo.Enabled = false;
+                    index = 0;
+                }
+            }
+        }
 
+        private void buttonBack_Click(object sender, EventArgs e)
+        {
+            if(calculatorDisplayBox.Text != "")
+            {
+                calculatorDisplayBox.Text = calculatorDisplayBox.Text.Remove(calculatorDisplayBox.Text.Length - 1, 1);
             }
         }
 
@@ -190,22 +255,35 @@ namespace CalculatorProject
             String number = "";
 
             //for each char in the char array
-            foreach(char c in characters)
+            for(int i = 0; i < characters.Length; i++)
             {
-                //if the char is not a space
-                if(c != ' ')
+                //if the character is an operator
+                if (characters[i] == '+' || characters[i] == '-' || characters[i] == '*' || characters[i] == '/')
                 {
-                    //if the character is an operator
-                    if (c == '+' || c == '-' || c == '*' || c == '/')
+                    result.Add(number); //add the number to the result list
+                    result.Add(characters[i].ToString());   //add the operator to the result list
+                    number = "";    //set number back to an empty string
+                }
+                //if the character is a space
+                else if(characters[i] == ' ')
+                {
+                    //if the space is not the very first or very last character
+                    if(i != 0 && i != characters.Length-1)
                     {
-                        result.Add(number); //add the number to the result list
-                        result.Add(c.ToString());   //add the operator to the result list
-                        number = "";    //set number back to an empty string
+                        //if the space is not following an operator
+                        if(characters[i-1] != '+' && characters[i - 1] != '-' && characters[i - 1] != '*' && characters[i - 1] != '/')
+                        {
+                            //and if the character following is not an operator
+                            if (characters[i + 1] != '+' && characters[i + 1] != '-' && characters[i + 1] != '*' && characters[i + 1] != '/')
+                            {
+                                number += characters[i];    //add the space to number
+                            }
+                        }
                     }
-                    else
-                    {
-                        number += c;    //add the character to number
-                    }
+                }
+                else
+                {
+                    number += characters[i];    //add the character to number
                 }
             }
             
@@ -270,21 +348,31 @@ namespace CalculatorProject
                     //if the input only contains one part
                     else if (input.Count == 1)
                     {
-                        //do nothing, if an operator is the only part then an error gets thrown for the left operand
-                        //therefore the only part in the input textbox is a number, so just keep the number in the textbox: i.e. 137 = 137
-                        return calculatorDisplayBox.Text;
+                        if (simpleCalculator == null)
+                        {
+                            simpleCalculator = new Calculator(input[0], "", "");
+                            simpleCalculator.calculate();
+                            return simpleCalculator.getResult();
+                        }
+                        else
+                        {
+                            simpleCalculator.setLeft(input[0]);
+                            simpleCalculator.setOperator("");
+                            simpleCalculator.setRight("");
+                            simpleCalculator.calculate();
+                            return simpleCalculator.getResult();
+                        }
                     }
                     //if the input is longer than the basic formula
                     else
                     {
-                        //advanced calculator
-                        return "";
+                        return "Error: Too many arguments";
                     }
                 }
                 //if the user has specified they are using the refactored calculator
                 else
                 {
-
+                    return refactoredCalculator.calculate(input);
                 }
             }
 
@@ -327,6 +415,8 @@ namespace CalculatorProject
                             //those three strings are not in scientific notation
                             else
                             {
+                                Console.WriteLine(input[i]);
+                                Console.WriteLine(intResult);
                                 output.Add(input[i]);
                                 break;  //break out of the for loop
                             }

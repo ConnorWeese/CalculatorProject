@@ -18,6 +18,7 @@ namespace CalculatorProject
         public Calculator(String _left, String _right, String _op)
         {
             previousResults = new Queue<String>(11);    //initialize the queue with a capcity of 11
+            result = "";
 
             //set members left, right, op and result
             if (setLeft(_left))
@@ -28,21 +29,8 @@ namespace CalculatorProject
                     {
                         result = "";
                     }
-                    else
-                    {
-                        result = "Operator Error";
-                    }
-                }
-                else
-                {
-                    result = "Right Operand Error";
                 }
             }
-            else
-            {
-                result = "Left Operand Error";
-            }
-            
         }
 
         public bool setLeft(String value)
@@ -51,13 +39,13 @@ namespace CalculatorProject
             //try to parse value into a Double and store the result in left
             bool success = Double.TryParse(value, out left);
             
-            //if the conversion was successful
-            if (success)
+            //if the conversion was successful, and the converted number is not Double.NaN
+            if (success && !Double.IsNaN(left))
             {
                 return true;    //return true;
             }
 
-            result = "Left Operand Error";
+            result = String.Format("Syntax Error: \"{0}\"", value);
 
             return false;   //else, return false
         }
@@ -67,13 +55,13 @@ namespace CalculatorProject
             //try to parse value into a Double and store the result in right
             bool success = Double.TryParse(value, out right);
 
-            //if the conversion was successful
-            if (success)
+            //if the conversion was successful, and the converted number is not Double.NaN
+            if (success && !Double.IsNaN(right))
             {
                 return true;    //return true;
             }
 
-            result = "Right Operand Error";
+            result = String.Format("Syntax Error: \"{0}\"", value);
 
             return false;   //else, return false
         }
@@ -87,7 +75,7 @@ namespace CalculatorProject
                 return true;    //return true
             }
 
-            result = "Operator Error";
+            result = String.Format("Syntax Error: \"{0}\"", value);
 
             return false;   //return false
         }
@@ -95,7 +83,8 @@ namespace CalculatorProject
         public void calculate()
         {
             //if there are no already exsisting errors
-            if(result != "Left Operand Error" && result != "Right Operand Error" && result != "Operator Error")
+            //if(result != "Left Operand Error" && result != "Right Operand Error" && result != "Operator Error")
+            if(result == "")
             {
                 //if the opperation is addition
                 if (op == "+")
@@ -112,7 +101,7 @@ namespace CalculatorProject
                     }
                     catch (OverflowException)
                     {
-                        result = "Overflow";  //set result as an overflow error
+                        result = "Error: Overflow";  //set result as an overflow error
                     }
                 }
                 //if the opperation is subtraction
@@ -130,7 +119,7 @@ namespace CalculatorProject
                     }
                     catch (OverflowException)
                     {
-                        result = "Overflow";  //set result as an overflow error
+                        result = "Error: Overflow";  //set result as an overflow error
                     }
                 }
                 //if the operation is multiplication
@@ -148,7 +137,7 @@ namespace CalculatorProject
                     }
                     catch (OverflowException)
                     {
-                        result = "Overflow";  //set result as an overflow error
+                        result = "Error: Overflow";  //set result as an overflow error
                     }
                 }
                 //if the operation is division
@@ -171,11 +160,11 @@ namespace CalculatorProject
                     }
                     catch (DivideByZeroException)
                     {
-                        result = "Division by Zero Error";    //set result as a division by zero error
+                        result = "Error: Division by Zero";    //set result as a division by zero error
                     }
                     catch (OverflowException)
                     {
-                        result = "Overflow";    //set result as overflow
+                        result = "Error: Overflow";    //set result as overflow
                     }
                 }
                 //if the operation is none of the above

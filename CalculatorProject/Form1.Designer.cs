@@ -51,6 +51,7 @@
             this.buttonUndo = new System.Windows.Forms.Button();
             this.buttonRedo = new System.Windows.Forms.Button();
             this.checkRefactoredCalculator = new System.Windows.Forms.CheckBox();
+            this.buttonBack = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonSeven
@@ -70,7 +71,7 @@
             this.calculatorDisplayBox.Location = new System.Drawing.Point(12, 12);
             this.calculatorDisplayBox.Name = "calculatorDisplayBox";
             this.calculatorDisplayBox.Size = new System.Drawing.Size(354, 26);
-            this.calculatorDisplayBox.TabIndex = 2;
+            this.calculatorDisplayBox.TabIndex = 0;
             // 
             // buttonEight
             // 
@@ -304,11 +305,23 @@
             this.checkRefactoredCalculator.UseVisualStyleBackColor = true;
             this.checkRefactoredCalculator.CheckedChanged += new System.EventHandler(this.checkRefactoredCalculator_CheckedChanged);
             // 
+            // buttonBack
+            // 
+            this.buttonBack.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonBack.Location = new System.Drawing.Point(321, 162);
+            this.buttonBack.Name = "buttonBack";
+            this.buttonBack.Size = new System.Drawing.Size(45, 86);
+            this.buttonBack.TabIndex = 24;
+            this.buttonBack.Text = "←";
+            this.buttonBack.UseVisualStyleBackColor = true;
+            this.buttonBack.Click += new System.EventHandler(this.buttonBack_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(380, 402);
+            this.Controls.Add(this.buttonBack);
             this.Controls.Add(this.checkRefactoredCalculator);
             this.Controls.Add(this.buttonRedo);
             this.Controls.Add(this.buttonUndo);
@@ -364,6 +377,7 @@
         private System.Windows.Forms.Button buttonUndo;
         private System.Windows.Forms.Button buttonRedo;
         private System.Windows.Forms.CheckBox checkRefactoredCalculator;
+        private System.Windows.Forms.Button buttonBack;
     }
 }
 
