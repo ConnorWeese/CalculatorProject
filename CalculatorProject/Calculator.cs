@@ -46,7 +46,15 @@ namespace CalculatorProject
             {
                 return true;    //return true;
             }
-            result = String.Format("Error: \"{0}\" is not a number", value);
+            //if value is an operand
+            else if(value == "+" || value == "-" || value == "*" || value == "/")
+            {
+                result = "Error: Missing left operand";
+            }
+            else
+            {
+                result = String.Format("Error: \"{0}\" is not a number", value);
+            }
 
             return false;   //else, return false
         }
@@ -65,7 +73,14 @@ namespace CalculatorProject
 
             if(result == "")
             {
-                result = String.Format("Error: \"{0}\" is not a number", value);
+                if (value == "")
+                {
+                    result = "Error: Missing right operand";
+                }
+                else
+                {
+                    result = String.Format("Error: \"{0}\" is not a number", value);
+                }
             }
 
             return false;   //else, return false
@@ -83,7 +98,14 @@ namespace CalculatorProject
 
             if (result == "")
             {
-                result = String.Format("Input Error: \"{0}\"", value);
+                if(value == "")
+                {
+                    result = "Error: Missing operator";
+                }
+                else
+                {
+                    result = String.Format("Error: \"{0}\" is not an operator", value);
+                }
             }
 
             return false;   //return false

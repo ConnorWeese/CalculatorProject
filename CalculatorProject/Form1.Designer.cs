@@ -346,7 +346,7 @@
             this.Controls.Add(this.calculatorDisplayBox);
             this.Controls.Add(this.buttonSeven);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Calculator";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -48,10 +48,45 @@ namespace CalculatorProject
 
         private void buttonEqual_Click(object sender, EventArgs e)
         {
-            calculatorDisplayBox.Text = getCalculationResult();
-            buttonUndo.Enabled = true;
-            buttonRedo.Enabled = false;
-            index = 0;
+            String calcResult = getCalculationResult(); //string to hold the results of the calculation
+
+            //if the user has selected to use the refactored calculator
+            if (checkRefactoredCalculator.Checked == true) 
+            {
+                //if the ressult returned by the calculation is not the same as the result stored by the calculator
+                if (calcResult == refactoredCalculator.getResult())
+                {
+                    calculatorDisplayBox.Text = calcResult;
+                    buttonUndo.Enabled = true;  //set the undo button to be enabled
+                    buttonRedo.Enabled = false; //set the redo button to be disabled
+                    index = 0;  //set the history index to 0
+                }
+                else
+                {
+                    calculatorDisplayBox.Text = calcResult;
+                }
+            }
+            //if the user has selected to use the simple calculator
+            else
+            {
+                //if the ressult returned by the calculation is not the same as the result stored by the calculator
+                if (simpleCalculator != null && calcResult == simpleCalculator.getResult())
+                {
+                    calculatorDisplayBox.Text = calcResult;
+                    buttonUndo.Enabled = true;  //set the undo button to be enabled
+                    buttonRedo.Enabled = false; //set the redo button to be disabled
+                    index = 0;  //set the history index to 0
+                }
+                else
+                {
+                    calculatorDisplayBox.Text = calcResult;
+                }
+            }
+
+            //focus on the calculatorDisplayBox and set the cursor to the end
+            calculatorDisplayBox.Focus();
+            calculatorDisplayBox.SelectionStart = calculatorDisplayBox.TextLength;
+            calculatorDisplayBox.SelectionLength = 0;
         }
 
         private void buttonOne_Click(object sender, EventArgs e)
@@ -127,6 +162,11 @@ namespace CalculatorProject
         private void buttonClear_Click(object sender, EventArgs e)
         {
             calculatorDisplayBox.Text = "";
+
+            //focus on the calculatorDisplayBox and set the cursor to the end
+            calculatorDisplayBox.Focus();
+            calculatorDisplayBox.SelectionStart = calculatorDisplayBox.TextLength;
+            calculatorDisplayBox.SelectionLength = 0;
         }
 
         private void buttonE_Click(object sender, EventArgs e)
@@ -258,10 +298,40 @@ namespace CalculatorProject
             //if the user presses enter when the textbox is focused
             if(e.KeyChar == (char)Keys.Enter)
             {
-                calculatorDisplayBox.Text = getCalculationResult(); //get the calculation results
-                buttonUndo.Enabled = true;  //set the undo button to be enabled
-                buttonRedo.Enabled = false; //set the redo button to be disabled
-                index = 0;  //set the history index to 0
+                String calcResult = getCalculationResult(); //string to hold the results of the calculation
+
+                //if the user has selected to use the refactored calculator
+                if (checkRefactoredCalculator.Checked == true)
+                {
+                    //if the ressult returned by the calculation is not the same as the result stored by the calculator
+                    if (calcResult == refactoredCalculator.getResult())
+                    {
+                        calculatorDisplayBox.Text = calcResult;
+                        buttonUndo.Enabled = true;  //set the undo button to be enabled
+                        buttonRedo.Enabled = false; //set the redo button to be disabled
+                        index = 0;  //set the history index to 0
+                    }
+                    else
+                    {
+                        calculatorDisplayBox.Text = calcResult;
+                    }
+                }
+                //if the user has selected to use the simple calculator
+                else
+                {
+                    //if the ressult returned by the calculation is not the same as the result stored by the calculator
+                    if (simpleCalculator != null && calcResult == simpleCalculator.getResult())
+                    {
+                        calculatorDisplayBox.Text = calcResult;
+                        buttonUndo.Enabled = true;  //set the undo button to be enabled
+                        buttonRedo.Enabled = false; //set the redo button to be disabled
+                        index = 0;  //set the history index to 0
+                    }
+                    else
+                    {
+                        calculatorDisplayBox.Text = calcResult;
+                    }
+                }
 
                 //focus on the calculatorDisplayBox and set the cursor to the end
                 calculatorDisplayBox.Focus();
@@ -374,6 +444,7 @@ namespace CalculatorProject
                     //if the input only contains one part
                     else if (input.Count == 1)
                     {
+                        /*
                         //if the simpleCalculator has not been initiated yet
                         if (simpleCalculator == null)
                         {
@@ -388,7 +459,7 @@ namespace CalculatorProject
                             simpleCalculator.setRight("");  //set the right operand to be an empty string
                             simpleCalculator.calculate();   //calculate the reuslt
                             return simpleCalculator.getResult();    //return the result
-                        }
+                        }*/
                     }
                     //if the input is longer than the basic formula
                     else
@@ -402,7 +473,7 @@ namespace CalculatorProject
                                 {
                                     if(!Char.IsDigit(str[i]) && str[i] != '+' && str[i] != '-' && str[i] != '*' && str[i] != '/' && str[i] != '.')
                                     {
-                                        return String.Format("Syntax Error: \"{0}\"", str);
+                                        return String.Format("Error: \"{0}\" is not a number", str);
                                     }
                                 }
                             }
@@ -417,7 +488,7 @@ namespace CalculatorProject
                 }
             }
 
-            return "";
+            return calculatorDisplayBox.Text;
         }
 
         //private method to check if some strings are in scientific notation format
@@ -437,8 +508,8 @@ namespace CalculatorProject
                         output.Add(input[i]);   //add the string to the output list
                         break;  //break out of the for loop
                     }
-                    //if a certain character is not a number or an operator or a decimal, this is the final character in the string, and this is not the only character in the string
-                    else if (!char.IsDigit(input[i][j]) && input[i][j] != '+' && input[i][j] != '-' && input[i][j] != '*' && input[i][j] != '/' && input[i][j] != '.' && j == input[i].Length - 1 && j != 0)
+                    //if a certain character is not a number or an operator or a decimal, this is the final character in the string, this is not the only character in the string, and this is not the last string in input
+                    else if (!char.IsDigit(input[i][j]) && input[i][j] != '+' && input[i][j] != '-' && input[i][j] != '*' && input[i][j] != '/' && input[i][j] != '.' && j == input[i].Length - 1 && j != 0 && i != input.Count-1)
                     {
                         //if this character is E, then this might be scientific notation
                         if(input[i][j] == 'E')
