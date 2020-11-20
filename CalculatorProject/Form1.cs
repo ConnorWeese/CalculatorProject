@@ -366,6 +366,20 @@ namespace CalculatorProject
                     //if the input is longer than the basic formula
                     else
                     {
+                        //check for a failed scientific notation
+                        foreach(String str in input)
+                        {
+                            if(str[str.Length-1] == 'E')
+                            {
+                                for(int i=0; i<str.Length-1; i++)
+                                {
+                                    if(!Char.IsDigit(str[i]) && str[i] != '+' && str[i] != '-' && str[i] != '*' && str[i] != '/' && str[i] != '.')
+                                    {
+                                        return String.Format("Syntax Error: \"{0}\"", str);
+                                    }
+                                }
+                            }
+                        }
                         return "Error: Too many arguments";
                     }
                 }
@@ -415,8 +429,6 @@ namespace CalculatorProject
                             //those three strings are not in scientific notation
                             else
                             {
-                                Console.WriteLine(input[i]);
-                                Console.WriteLine(intResult);
                                 output.Add(input[i]);
                                 break;  //break out of the for loop
                             }
